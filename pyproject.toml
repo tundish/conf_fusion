@@ -19,4 +19,5 @@ classifiers = [
     "Programming Language :: Python"
 ]
 dependencies = [
+    "tomli >= 2.0.0; python_version < '3.11'"
 ]

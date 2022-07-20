@@ -23,7 +23,7 @@ import configparser
 import itertools
 import unittest
 
-from confusion.parser import FusionParser
+from confusion.parser import TOMLParser
 
 
 class TestParser(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestParser(unittest.TestCase):
         [section]
         A = 1
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertFalse("a" in conf["section"])
 
     def test_sections(self):
@@ -46,7 +46,7 @@ class TestParser(unittest.TestCase):
 
         [  D ]
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertEqual(["A", "A.B.C", "D"], list(conf.sections.keys()))
 
     def test_table(self):
@@ -59,7 +59,7 @@ class TestParser(unittest.TestCase):
 
         [  D ]
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertEqual("1", conf.sections["A"].get("tag"))
         self.assertEqual({"tag": "2"}, dict(conf.sections["A.B.C"]))
 
@@ -68,7 +68,7 @@ class TestParser(unittest.TestCase):
         [A.B.C]
         tag = 1
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertEqual({"tag": "1"}, dict(conf.sections["A.B.C"]))
 
     def test_defaults(self):
@@ -79,7 +79,7 @@ class TestParser(unittest.TestCase):
         [B]
         flavour = strawberry
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertEqual("vanilla", conf.sections["A"].get("flavour"))
         self.assertEqual("strawberry", conf.sections["B"].get("flavour"))
 
@@ -92,17 +92,17 @@ class TestParser(unittest.TestCase):
         [B]
         flavour = ${A:flavour}
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
         self.assertEqual("strawberry", conf.sections["A"].get("flavour"))
         self.assertEqual("strawberry", conf.sections["B"].get("flavour"))
 
-    def test_loads(self):
+    def test_from_string(self):
         text = """
         [A]
         [B]
         """
-        conf = FusionParser.loads(text)
-        self.assertIsInstance(conf, FusionParser)
+        conf = TOMLParser.from_string(text)
+        self.assertIsInstance(conf, TOMLParser)
 
     def test_literals(self):
         text = """
@@ -113,18 +113,18 @@ class TestParser(unittest.TestCase):
         [B]
         flavour = ${A:flavour}
         """
-        conf = FusionParser.loads(text)
+        conf = TOMLParser.from_string(text)
 
-    def test_dumps_simple(self):
+    def test_write_string_simple(self):
         text = """
         [A]
         [B]
         """
-        conf = FusionParser.loads(text)
-        rv = conf.dumps()
+        conf = TOMLParser.from_string(text)
+        rv = conf.write_string()
         self.assertEqual("[A]\n[B]", rv)
 
-    def test_dumps_substitution(self):
+    def test_write_string_substitution(self):
         text = """
         [DEFAULT]
         flavour = vanilla
@@ -133,17 +133,17 @@ class TestParser(unittest.TestCase):
         [B]
         flavour = ${A:flavour}
         """
-        conf = FusionParser.loads(text)
-        rv = conf.dumps()
+        conf = TOMLParser.from_string(text)
+        rv = conf.write_string()
         self.assertNotIn("$", rv)
 
-    def test_dumps_quotes(self):
+    def test_write_string_quotes(self):
         text = """
         [A]
         label = "day/night cycles"
         [B]
         color = {"r" = 0, "g" = 0, "b" = 0}
         """
-        conf = FusionParser.loads(text)
-        rv = conf.dumps()
+        conf = TOMLParser.from_string(text)
+        rv = conf.write_string()
         self.assertEqual(8, rv.count('"'))

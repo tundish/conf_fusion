@@ -25,6 +25,11 @@ import pathlib
 import re
 import sys
 
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
+
 
 """
 This utility applies configparser substitution patterns as a preprocessor
@@ -37,10 +42,10 @@ Usage:
 """
 
 
-class FusionParser(configparser.ConfigParser):
+class TOMLParser(configparser.TOMLParserigParser):
 
     @classmethod
-    def loads(cls, text, **kwargs):
+    def from_string(cls, text, **kwargs):
         rv = cls(**kwargs)
         rv.read_string(text)
         return rv
@@ -60,7 +65,12 @@ class FusionParser(configparser.ConfigParser):
         d = self.defaults()
         return {k: dict(d, **s) for k, s in self.sections.items()}
 
-    def dumps(self):
+    @property
+    def tables(self):
+        text = self.write_string()
+        return tomllib.loads(text)
+
+    def write_string(self):
         rv = [
             itertools.chain(
                 (f"[{l}]",),
@@ -77,8 +87,8 @@ def main(args):
     else:
         text = args.input.read_text()
 
-    conf = Conf.loads(text)
-    print(conf.dumps(), file=sys.stdout)
+    conf = TOMLParser.from_string(text)
+    print(conf.write_string(), file=sys.stdout)
 
 
 def parser():
