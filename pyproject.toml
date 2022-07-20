@@ -3,7 +3,7 @@
 [project]
 name = "confusion"
 version = "0.1.0"
-description = "A Pre-processor for TOML files."
+description = "A pre-processor for TOML files."
 readme = "README.rst"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
