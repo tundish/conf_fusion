@@ -108,12 +108,20 @@ class TestParser(unittest.TestCase):
         text = """
         [DEFAULT]
         flavour = vanilla
+        flake = false
         [A]
         flavour = strawberry
         [B]
         flavour = ${A:flavour}
         """
         conf = TOMLParser.from_string(text)
+        self.assertEqual(
+            {
+                "A": {"flavour": "strawberry", "flake": "false"},
+                "B": {"flavour": "strawberry", "flake": "false"}
+            },
+            conf.literals
+        )
 
     def test_write_string_simple(self):
         text = """
@@ -123,19 +131,28 @@ class TestParser(unittest.TestCase):
         conf = TOMLParser.from_string(text)
         rv = conf.write_string()
         self.assertEqual("[A]\n[B]", rv)
+        self.assertEqual({"A": {}, "B": {}}, conf.tables)
 
     def test_write_string_substitution(self):
         text = """
         [DEFAULT]
-        flavour = vanilla
+        flavour = "vanilla"
+        flake = false
         [A]
-        flavour = strawberry
+        flavour = "strawberry"
         [B]
         flavour = ${A:flavour}
         """
         conf = TOMLParser.from_string(text)
         rv = conf.write_string()
         self.assertNotIn("$", rv)
+        self.assertEqual(
+            {
+                "A": {"flavour": "strawberry", "flake": False},
+                "B": {"flavour": "strawberry", "flake": False}
+            },
+            conf.tables
+        )
 
     def test_write_string_quotes(self):
         text = """
@@ -147,3 +164,10 @@ class TestParser(unittest.TestCase):
         conf = TOMLParser.from_string(text)
         rv = conf.write_string()
         self.assertEqual(8, rv.count('"'))
+        self.assertEqual(
+            {
+                "A": {"label": "day/night cycles"},
+                "B": {"color": {"r": 0, "g": 0, "b": 0}}
+            },
+            conf.tables
+        )
