@@ -33,16 +33,16 @@ Let's use this scrap of TOML for test data::
 
     text = """
     [DEFAULT]
-    flavour = vanilla
+    flavour = "vanilla"
     flake = false
     [A]
-    flavour = strawberry
+    flavour = "strawberry"
     [B]
     flavour = ${A:flavour}
     flake = true
     """
 
-The simplest way to construct a parser is using the `from_string` class method::
+The simplest way to construct a parser is using the *from_string* class method::
 
     parser = TOMLParser.from_string(text)
 
@@ -55,12 +55,12 @@ To create a TOMLParser object from a TOML file, just use the `pathlib module`_::
     parser = TOMLParser.from_string(text)
 
 A TOMLParser object has all the methods of Python's standard `ConfigParser`.
-There is one difference; the `sections` attribute is a property which returns a dictionary::
+There is one difference; the *sections* attribute is a property which returns a dictionary::
 
     print(parser.sections)
     >>> {'A': <Section: A>, 'B': <Section: B>}
 
-The hierarchical TOML data is available via the object's `tables` property::
+The hierarchical TOML data is available via the object's *tables* property::
 
     print(parser.tables)
     >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': False}}
