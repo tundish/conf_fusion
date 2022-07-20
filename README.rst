@@ -1,7 +1,7 @@
 Confusion
 =========
 
-This little package allows you to use default attributes and variable substitution in your TOML files.
+This package defines a *TOMLParser* class which allows you to employ an extended syntax in your TOML files.
 
 Defaults
 --------
@@ -25,6 +25,15 @@ Confusion_ lets you add a `DEFAULT` section just like the traditional Python `co
 
 Substitution
 ------------
+
+By applying the extended substitution syntax, you can define a value in only one location and reference
+it elsewhere (DRY principle)::
+
+    [A]
+    flavour = "strawberry"
+
+    [B]
+    flavour = ${A:flavour}
 
 Example
 -------
