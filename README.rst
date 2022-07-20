@@ -35,11 +35,14 @@ Let's use this scrap of TOML for test data::
     [DEFAULT]
     flavour = "vanilla"
     flake = false
+
     [A]
     flavour = "strawberry"
+
     [B]
     flavour = ${A:flavour}
     flake = true
+
     """
 
 The simplest way to construct a parser is using the *from_string* class method::
