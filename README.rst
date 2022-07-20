@@ -31,26 +31,20 @@ Example
 
 Let's use this scrap of TOML for test data::
 
-        text = """
-        [DEFAULT]
-        flavour = vanilla
-        flake = false
-        [A]
-        flavour = strawberry
-        [B]
-        flavour = ${A:flavour}
-        flake = true
-        """
+    text = """
+    [DEFAULT]
+    flavour = vanilla
+    flake = false
+    [A]
+    flavour = strawberry
+    [B]
+    flavour = ${A:flavour}
+    flake = true
+    """
 
 The simplest way to construct a parser is using the `from_string` class method::
 
-        parser = TOMLParser.from_string(text)
-
-A TOMLParser object has all the methods of Python's standard `ConfigParser`.
-There is one difference; the `sections` attribute is a property which returns a dictionary::
-
-        print(parser.sections)
-        >>> {'A': <Section: A>, 'B': <Section: B>}
+    parser = TOMLParser.from_string(text)
 
 To create a TOMLParser object from a TOML file, just use the `pathlib module`_::
 
@@ -60,6 +54,16 @@ To create a TOMLParser object from a TOML file, just use the `pathlib module`_::
     text = pathlib.Path("my.toml").read_text()
     parser = TOMLParser.from_string(text)
 
+A TOMLParser object has all the methods of Python's standard `ConfigParser`.
+There is one difference; the `sections` attribute is a property which returns a dictionary::
+
+    print(parser.sections)
+    >>> {'A': <Section: A>, 'B': <Section: B>}
+
+The hierarchical TOML data is available via the object's `tables` property::
+
+    print(parser.tables)
+    >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': False}}
 
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _confusion: https://github.com/tundish/conf_fusion

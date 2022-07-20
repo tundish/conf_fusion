@@ -115,7 +115,6 @@ class TestParser(unittest.TestCase):
         flavour = ${A:flavour}
         """
         conf = TOMLParser.from_string(text)
-        print(conf.sections)
         self.assertEqual(
             {
                 "A": {"flavour": "strawberry", "flake": "false"},
