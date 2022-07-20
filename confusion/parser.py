@@ -42,7 +42,7 @@ Usage:
 """
 
 
-class TOMLParser(configparser.TOMLParserigParser):
+class TOMLParser(configparser.ConfigParser):
 
     @classmethod
     def from_string(cls, text, **kwargs):
