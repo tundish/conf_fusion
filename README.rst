@@ -38,9 +38,10 @@ it elsewhere (DRY principle)::
 Example
 -------
 
-Let's use this scrap of TOML for test data::
+Let's use this scrap of TOML for demonstration::
 
     text = """
+
     [DEFAULT]
     flavour = "vanilla"
     flake = false
