@@ -63,7 +63,7 @@ There is one difference; the *sections* attribute is a property which returns a 
 The hierarchical TOML data is available via the object's *tables* property::
 
     print(parser.tables)
-    >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': False}}
+    >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': True}}
 
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _confusion: https://github.com/tundish/conf_fusion
