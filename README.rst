@@ -52,7 +52,7 @@ There is one difference; the `sections` attribute is a property which returns a 
         print(parser.sections)
         >>> {'A': <Section: A>, 'B': <Section: B>}
 
-::
+To create a TOMLParser object from a TOML file, just use the `pathlib module`_::
 
     import pathlib
     from confusion import TOMLParser
@@ -63,3 +63,4 @@ There is one difference; the `sections` attribute is a property which returns a 
 
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _confusion: https://github.com/tundish/conf_fusion
+.. _pathlib module: https://docs.python.org/3/library/pathlib.html#module-pathlib
