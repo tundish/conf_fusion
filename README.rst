@@ -35,6 +35,19 @@ it elsewhere (DRY principle)::
     [B]
     flavour = ${A:flavour}
 
+Cross-compatible strings
+------------------------
+
+Multiline strings have to be formatted to conform to both *configparser* and *TOML* syntaxes::
+
+    [caveat]
+    text = """
+        Multiline strings
+        are possible but
+        indentation of these closing quotes
+        is required.
+        """
+
 Example
 -------
 
