@@ -171,3 +171,17 @@ class TestParser(unittest.TestCase):
             },
             conf.tables
         )
+    def test_write_multiline_strings(self):
+        text = '''
+        [A]
+        text = """Code is like
+            Poetry."""
+        '''
+        conf = TOMLParser.from_string(text)
+        rv = conf.write_string()
+        self.assertEqual(
+            {
+                "A": {"text": "Code is like\nPoetry."},
+            },
+            conf.tables
+        )
