@@ -91,6 +91,36 @@ The hierarchical TOML data is available via the object's *tables* property::
     print(parser.tables)
     >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': True}}
 
+Utilities
+---------
+
+*TOML2dot* is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
+
+    $ python -m confusion.utils.toml2dot --help
+
+    This utility translates a graph defined in a TOML file to an equivalent .dot
+
+    Usage:
+
+        python -m confusion.utils.toml2dot --label-graph Taxonomy --digraph taxonomy.toml > taxonomy.dot
+
+        dot -Tsvg taxonomy.dot > taxonomy.svg
+
+           [-h] [--label-graph LABEL_GRAPH] [--label-inherits LABEL_INHERITS] [--cluster] [--digraph] input [input ...]
+
+    positional arguments:
+      input                 Set input file.
+
+    options:
+      -h, --help            show this help message and exit
+      --label-graph LABEL_GRAPH
+                            Set a label for the graph.
+      --label-inherits LABEL_INHERITS
+                            Set the label for an arc signifying an 'inherits' relationship.
+      --cluster             Generate a clustered graph.
+      --digraph, --directed
+                            Make arcs directional.
+
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _confusion: https://github.com/tundish/conf_fusion
 .. _pathlib module: https://docs.python.org/3/library/pathlib.html#module-pathlib
