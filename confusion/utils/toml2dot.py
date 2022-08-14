@@ -12,6 +12,12 @@ import sys
 
 import toml
 
+"""
+TODO:
+* Concatenate multiple TOML files
+* Adopt confusion parser
+
+"""
 
 """
 This utility translates a graph defined in a TOML file to an equivalent .dot
