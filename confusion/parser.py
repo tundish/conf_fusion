@@ -18,6 +18,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 # USA
 
+"""
+This utility applies configparser substitution patterns as a preprocessor
+for, eg: TOML files.
+
+Usage:
+
+    python -m confusion.parser my.ini > my.toml
+
+"""
+
 
 import argparse
 import configparser
@@ -30,17 +40,6 @@ try:
     import tomllib
 except ImportError:
     import tomli as tomllib
-
-
-"""
-This utility applies configparser substitution patterns as a preprocessor
-for, eg: TOML files.
-
-Usage:
-
-    python -m confusion.parser my.ini > my.toml
-
-"""
 
 
 class TOMLParser(configparser.ConfigParser):

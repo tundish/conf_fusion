@@ -23,7 +23,7 @@ This utility translates a graph defined in a TOML file to an equivalent .dot
 
 Usage:
 
-    python -m utils.toml2dot --label "BIPED CAMP Taxonomy" --digraph \
+    python -m utils.toml2dot --label-graph "BIPED CAMP Taxonomy" --digraph \
         design/taxonomy.toml > design/taxonomy.dot
 
     dot -Tsvg design/taxonomy.dot > design/taxonomy.svg
@@ -41,7 +41,6 @@ import sys
 
 from confusion.parser import tomllib
 from confusion.parser import TOMLParser
-
 
 
 RGBA = namedtuple("RGBA", ["r", "g", "b", "a"], defaults=(255,))
@@ -85,13 +84,15 @@ class Model:
     def is_arc(table):
         return set(table.keys()).intersection({"source", "target"})
 
-    def __init__(self, text, data):
+    def __init__(self, text, data, args=argparse.Namespace()):
         self.text = text
         self.data = data
+        self.args = args
         self.table_finder = re.compile("\[\s*([\.\w]+)\s*\]")
 
     @property
     def graphs(self):
+        """Experimental. Used to mask data by storing a list of the graphs they appear in."""
         return {
             i for table, k, v in self.walk()
             for i in (v if isinstance(v, list) else [v])
@@ -270,7 +271,7 @@ class Model:
                 yield (
                     f"{node_hash} {arc_style} {child_hash}"
                     f' ['
-                    f' label="...", weight={node.weight:.02f}'
+                    f' label="{self.args.label_inherits}", weight={node.weight:.02f}'
                     f' color="#{node.stroke.r:02x}{node.stroke.g:02x}{node.stroke.b:02x}{node.stroke.a:02x}"'
                     f' fontcolor="#{node.color.r:02x}{node.color.g:02x}{node.color.b:02x}{node.color.a:02x}"'
                     f' fillcolor="#{node.fill.r:02x}{node.fill.g:02x}{node.fill.b:02x}{node.fill.a:02x}"'
@@ -303,24 +304,30 @@ def main(args):
         return 2
 
     for path in paths:
-        print("Processed ", pathlib.Path(path).resolve(), file=sys.stderr)
+        print("Processed", pathlib.Path(path).resolve(), file=sys.stderr)
 
     name = pathlib.Path(paths[0]).stem
 
-    model = Model(parser.write_string(), parser.tables)
+    model = Model(parser.write_string(), parser.tables, args=args)
     if args.cluster:
-        writer = model.to_cluster(name=name, label=args.label, directed=args.digraph, strict=False)
+        writer = model.to_cluster(name=name, label=args.label_graph, directed=args.digraph, strict=False)
     else:
-        writer = model.to_dot(name=name, label=args.label, directed=args.digraph, strict=False)
+        writer = model.to_dot(name=name, label=args.label_graph, directed=args.digraph, strict=False)
 
-    print(*list(writer), sep="\n", file=sys.stdout)
+    lines = list(writer)
+    print(*lines, sep="\n", file=sys.stdout)
+    print("Generated", len(lines), "lines of output.", file=sys.stderr)
 
 
 def parser():
     rv = argparse.ArgumentParser(__doc__)
     rv.add_argument(
-        "--label", default=None,
+        "--label-graph", default=None,
         help="Set a label for the graph."
+    )
+    rv.add_argument(
+        "--label-inherits", default="...",
+        help="Set the label for an arc signifying an 'inherits' relationship."
     )
     rv.add_argument(
         "--cluster", default=False, action="store_true",
@@ -329,10 +336,6 @@ def parser():
     rv.add_argument(
         "--digraph", "--directed", default=False, action="store_true",
         help="Make arcs directional."
-    )
-    rv.add_argument(
-        "--test", default=False, action="store_true",
-        help="Run unit tests."
     )
     rv.add_argument(
         "input", nargs="+", type=pathlib.Path,
