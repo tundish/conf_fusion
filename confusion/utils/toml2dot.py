@@ -1,23 +1,22 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
-import argparse
-from collections import Counter
-from collections import namedtuple
-import dataclasses
-import functools
-import pathlib
-import re
-import sys
+# Copyright (C) 2022 tundish
 
-import toml
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 
-"""
-TODO:
-* Concatenate multiple TOML files
-* Adopt confusion parser
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 
-"""
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+# USA
 
 """
 This utility translates a graph defined in a TOML file to an equivalent .dot
@@ -30,6 +29,19 @@ Usage:
     dot -Tsvg design/taxonomy.dot > design/taxonomy.svg
 
 """
+
+import argparse
+from collections import namedtuple
+import dataclasses
+import fileinput
+import functools
+import pathlib
+import re
+import sys
+
+from confusion.parser import tomllib
+from confusion.parser import TOMLParser
+
 
 
 RGBA = namedtuple("RGBA", ["r", "g", "b", "a"], defaults=(255,))
@@ -66,7 +78,7 @@ class Model:
 
     @classmethod
     def loads(cls, text):
-        data = toml.loads(text)
+        data = tomllib.loads(text)
         return cls(text, data)
 
     @staticmethod
@@ -284,14 +296,18 @@ class Model:
 
 
 def main(args):
-    if not args.input:
-        text = sys.stdin.read()
-        name = ""
-    else:
-        text = args.input.read_text()
-        name = args.input.stem
+    parser = TOMLParser()
+    paths = parser.read(args.input)
+    if not paths:
+        print("No files processed.")
+        return 2
 
-    model = Model.loads(text)
+    for path in paths:
+        print("Processed ", pathlib.Path(path).resolve(), file=sys.stderr)
+
+    name = pathlib.Path(paths[0]).stem
+
+    model = Model(parser.write_string(), parser.tables)
     if args.cluster:
         writer = model.to_cluster(name=name, label=args.label, directed=args.digraph, strict=False)
     else:
@@ -319,7 +335,7 @@ def parser():
         help="Run unit tests."
     )
     rv.add_argument(
-        "input", nargs="?", type=pathlib.Path,
+        "input", nargs="+", type=pathlib.Path,
         help="Set input file."
     )
     return rv
