@@ -21,6 +21,7 @@
 import os
 import pathlib
 import tempfile
+import textwrap
 import unittest
 
 from confusion.config import Config
@@ -45,3 +46,39 @@ class TestConfig(unittest.TestCase):
         rv = Config.from_path(self.toml_path)
         self.assertIn("A", rv.tables)
         self.assertEqual({"a": "b"}, rv.tables["A"])
+
+    def test_merge_missing_section(self):
+        text = textwrap.dedent("""
+        [A]
+        foo = "bar"
+
+        """)
+        self.toml_path.write_text(text)
+
+        data = {"B_foo": "baz"}
+        rv = Config.from_path(self.toml_path).merge(data)
+        self.assertNotIn("B", rv.tables)
+
+    def test_merge_number(self):
+        text = textwrap.dedent("""
+        [A]
+        foo = "bar"
+
+        """)
+        self.toml_path.write_text(text)
+
+        data = {"A_foo": 0}
+        rv = Config.from_path(self.toml_path).merge(data)
+        self.assertEqual(0, rv.tables["A"]["foo"])
+
+    def test_merge_string(self):
+        text = textwrap.dedent("""
+        [A]
+        foo = "bar"
+
+        """)
+        self.toml_path.write_text(text)
+
+        data = {"A_foo": "baz"}
+        rv = Config.from_path(self.toml_path).merge(data)
+        self.assertEqual("baz", rv.tables["A"]["foo"])
