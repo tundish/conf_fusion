@@ -82,3 +82,15 @@ class TestConfig(unittest.TestCase):
         data = {"A_foo": "baz"}
         rv = Config.from_path(self.toml_path).merge(data)
         self.assertEqual("baz", rv.tables["A"]["foo"])
+
+    def test_merge_ignores_section_spacing(self):
+        text = textwrap.dedent("""
+        [ A ]
+        foo = "bar"
+
+        """)
+        self.toml_path.write_text(text)
+
+        data = {"A_foo": "baz"}
+        rv = Config.from_path(self.toml_path).merge(data)
+        self.assertEqual("baz", rv.tables["A"]["foo"])

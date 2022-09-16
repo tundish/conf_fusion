@@ -32,7 +32,29 @@ class Config(TOMLParser):
         text = path.read_text()
         return cls.from_string(text, path=path, **kwargs)
 
-    def __init__(self, path: pathlib.Path, **kwargs):
+    def __init__(self, path: pathlib.Path=None, **kwargs):
         super().__init__(**kwargs)
         self.path = path
 
+    def merge(self, data, sep="_"):
+        items = [
+            (section, key, val)
+            for val, section, _ , key in [
+                (v, *k.partition(sep))
+                for k, v in data.items()
+            ]
+            if key and section in self.sections
+        ]
+
+        for s, k, v in items:
+            try:
+                tomllib.loads(f"{k} = {v}")
+                self[s][k] = str(v)
+            except Exception:
+                self[s][k] = f'"{v}"'
+
+        return self
+
+    def configure_logging(self, table_name="logging"):
+        logging.config.dictConfig(self.tables.get(table_name, {"version": 1}))
+        return self
