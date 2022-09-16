@@ -18,9 +18,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 # USA
 
-import argparse
-import configparser
-import itertools
 import unittest
 
 from confusion.parser import TOMLParser
