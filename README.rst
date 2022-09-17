@@ -54,7 +54,7 @@ Multiline strings have to be formatted to conform to both *configparser* and *TO
 Usage
 =====
 
-Let's use this scrap of TOML for demonstration::
+Let's use this scrap of *CFN* for demonstration::
 
     text = """
 
@@ -77,11 +77,11 @@ The simplest way to construct a parser is using the *from_string* class method::
 
     parser = Config.from_string(text)
 
-To create a Config object from a file, just use the `from_path` method::
+To create a Config object from a file, just use the *from_path* method::
 
     parser = Config.from_path("my_config.cfn")
 
-A Config object has all the methods of Python's standard `ConfigParser`.
+A Config object has all the methods of Python's standard `ConfigParser class`_.
 There is one difference; the *sections* attribute is a property which returns a dictionary::
 
     print(parser.sections)
@@ -119,7 +119,7 @@ You can pass an alternative separator to the `merge` method::
 Utilities
 =========
 
-*TOML2dot* is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
+*CFN2dot* is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
 
     $ python -m confusion.utils.cfn2dot --help
 
@@ -147,4 +147,5 @@ Utilities
                             Make arcs directional.
 
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
+.. _configparser class: https://docs.python.org/3/library/configparser.html#configparser.ConfigParser
 .. _confusion: https://github.com/tundish/conf_fusion

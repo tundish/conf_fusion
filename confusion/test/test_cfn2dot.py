@@ -4,8 +4,8 @@
 import unittest
 
 
-from confusion.utils.toml2dot import Model
-from confusion.utils.toml2dot import Node
+from confusion.utils.cfn2dot import Model
+from confusion.utils.cfn2dot import Node
 
 
 class TestLoad(unittest.TestCase):
