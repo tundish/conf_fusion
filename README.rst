@@ -71,25 +71,25 @@ Let's use this scrap of *CFN* for demonstration::
 
     """
 
-The simplest way to construct a parser is using the *from_string* class method::
+The simplest way to construct a parser is via the *from_string* class method::
 
     from confusion import Config
 
-    parser = Config.from_string(text)
+    conf = Config.from_string(text)
 
-To create a Config object from a file, just use the *from_path* method::
+Or, to read a file, just use the *from_path* method::
 
-    parser = Config.from_path("my_config.cfn")
+    conf = Config.from_path("my_config.cfn")
 
 A Config object has all the methods of Python's standard `ConfigParser class`_.
 There is one difference; the *sections* attribute is a property which returns a dictionary::
 
-    print(parser.sections)
+    print(conf.sections)
     >>> {'A': <Section: A>, 'B': <Section: B>}
 
 The hierarchical TOML data is available via the object's *tables* property::
 
-    print(parser.tables)
+    print(conf.tables)
     >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': True}}
 
 Environment variables
@@ -108,13 +108,13 @@ You can define an environment variable *DB_PASS=postgres* and merge it in from t
 
     import os
 
-    parser = Config.from_path("my_config.cfn")
-    parser.merge(os.environ)
+    conf = Config.from_path("my_config.cfn")
+    conf.merge(os.environ)
 
 Only those variables with a corresponding section in the file will be merged in.
 You can pass an alternative separator to the `merge` method::
 
-    parser.merge({"window.width": 800, "window.height": 600}, sep=".")
+    conf.merge({"window.width": 800, "window.height": 600}, sep=".")
 
 Logging
 -------
