@@ -94,3 +94,16 @@ class TestConfig(unittest.TestCase):
         data = {"A_foo": "baz"}
         rv = Config.from_path(self.toml_path).merge(data)
         self.assertEqual("baz", rv.tables["A"]["foo"])
+
+    def test_merge_ignores_section_missing(self):
+        text = textwrap.dedent("""
+        [ A ]
+        foo = "bar"
+
+        """)
+        self.toml_path.write_text(text)
+
+        data = {"B_foo": "baz"}
+        rv = Config.from_path(self.toml_path).merge(data)
+        self.assertEqual("bar", rv.tables["A"]["foo"])
+        self.assertNotIn("B", rv.tables)

@@ -1,7 +1,10 @@
 Confusion
-=========
++++++++++
 
-This package defines a *TOMLParser* class which allows you to employ an extended syntax in your TOML files.
+This package defines a *Config* class which allows you to employ an extended syntax in your TOML files.
+
+Syntax
+======
 
 Defaults
 --------
@@ -48,8 +51,8 @@ Multiline strings have to be formatted to conform to both *configparser* and *TO
         is required.
         """
 
-Example
--------
+Usage
+=====
 
 Let's use this scrap of TOML for demonstration::
 
@@ -70,17 +73,15 @@ Let's use this scrap of TOML for demonstration::
 
 The simplest way to construct a parser is using the *from_string* class method::
 
-    parser = TOMLParser.from_string(text)
+    from confusion import Config
 
-To create a TOMLParser object from a TOML file, just use the `pathlib module`_::
+    parser = Config.from_string(text)
 
-    import pathlib
-    from confusion import TOMLParser
+To create a Config object from a file, just use the `from_path` method::
 
-    text = pathlib.Path("my.toml").read_text()
-    parser = TOMLParser.from_string(text)
+    parser = Config.from_path("my_config.cfn")
 
-A TOMLParser object has all the methods of Python's standard `ConfigParser`.
+A Config object has all the methods of Python's standard `ConfigParser`.
 There is one difference; the *sections* attribute is a property which returns a dictionary::
 
     print(parser.sections)
@@ -91,18 +92,42 @@ The hierarchical TOML data is available via the object's *tables* property::
     print(parser.tables)
     >>> {'A': {'flavour': 'strawberry', 'flake': False}, 'B': {'flavour': 'strawberry', 'flake': True}}
 
+Environment variables
+---------------------
+
+You can override settings in the Config object from a flat dictionary.
+Keys in the dictionary are parsed for a separator ('_' by default) which denotes the section
+in which the setting belongs.
+
+Suppose you want to avoid storing a password in this file::
+
+    [DB]
+    USER = "postgres"
+
+You can define an environment variable *DB_PASS=postgres* and merge it in from there::
+
+    import os
+
+    parser = Config.from_path("connection.cfn")
+    parser.merge(os.environ)
+
+Only those variables with a corresponding section in the file will be merged in.
+You can pass an alternative separator to the `merge` method::
+
+    parser.merge({"window.width": 800, "window.height": 600}, sep=".")
+
 Utilities
----------
+=========
 
 *TOML2dot* is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
 
-    $ python -m confusion.utils.toml2dot --help
+    $ python -m confusion.utils.cfn2dot --help
 
     This utility translates a graph defined in a TOML file to an equivalent .dot
 
     Usage:
 
-        python -m confusion.utils.toml2dot --label-graph Taxonomy --digraph taxonomy.toml > taxonomy.dot
+        python -m confusion.utils.cfn2dot --label-graph Taxonomy --digraph taxonomy.cfn > taxonomy.dot
 
         dot -Tsvg taxonomy.dot > taxonomy.svg
 
@@ -123,4 +148,3 @@ Utilities
 
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _confusion: https://github.com/tundish/conf_fusion
-.. _pathlib module: https://docs.python.org/3/library/pathlib.html#module-pathlib
