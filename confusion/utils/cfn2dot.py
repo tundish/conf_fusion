@@ -19,12 +19,12 @@
 # USA
 
 """
-This utility translates a graph defined in a TOML file to an equivalent .dot
+This utility translates a graph defined in a CFN file to an equivalent .dot
 
 Usage:
 
-    python -m utils.toml2dot --label-graph "BIPED CAMP Taxonomy" --digraph \
-        design/taxonomy.toml > design/taxonomy.dot
+    python -m utils.cfn2dot --label-graph "BIPED CAMP Taxonomy" --digraph \
+        design/taxonomy.cfn > design/taxonomy.dot
 
     dot -Tsvg design/taxonomy.dot > design/taxonomy.svg
 

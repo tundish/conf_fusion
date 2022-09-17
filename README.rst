@@ -108,7 +108,7 @@ You can define an environment variable *DB_PASS=postgres* and merge it in from t
 
     import os
 
-    parser = Config.from_path("connection.cfn")
+    parser = Config.from_path("my_config.cfn")
     parser.merge(os.environ)
 
 Only those variables with a corresponding section in the file will be merged in.
@@ -116,14 +116,23 @@ You can pass an alternative separator to the `merge` method::
 
     parser.merge({"window.width": 800, "window.height": 600}, sep=".")
 
+Logging
+-------
+
+The Config file has a convenient method to set up your logs according to the `logging configuration schema`_.
+
+This means you can achieve complete configuration of your application in this single line of code::
+
+    conf = Config.from_path("my_config.cfn").merge(os.environ).configure_logging(table_name="logging")
+
 Utilities
 =========
 
-*CFN2dot* is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
+``cfn2dot`` is a command line utility which generates a Grapviz *.dot* file from a data graph in confusion format::
 
     $ python -m confusion.utils.cfn2dot --help
 
-    This utility translates a graph defined in a TOML file to an equivalent .dot
+    This utility translates a graph defined in a CFN file to an equivalent .dot
 
     Usage:
 
@@ -149,3 +158,4 @@ Utilities
 .. _configparser module: https://docs.python.org/3/library/configparser.html#module-configparser
 .. _configparser class: https://docs.python.org/3/library/configparser.html#configparser.ConfigParser
 .. _confusion: https://github.com/tundish/conf_fusion
+.. _logging configuration schema: https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
